@@ -3,24 +3,22 @@ import base64
 import hashlib
 import hmac
 import json
+import ssl
 import sys
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 
-from 公共配置 import APP_KEY, APP_SECRET, MATERIALOUT_DETAIL_URL, TOKEN_URL
+from 公共配置 import APP_KEY, APP_SECRET, PURINRECORD_DETAIL_URL, TOKEN_URL
 
 
-DETAIL_URL = MATERIALOUT_DETAIL_URL
+DETAIL_URL = PURINRECORD_DETAIL_URL
 
-# 来自 corp-demo 项目 application.properties 中 10.167.80.50 环境的配置。
-# 刚计算出来的 access_token，有效期约 2 小时；脚本默认每次运行会重新获取。
 ACCESS_TOKEN = "YT5_TGdefault-tgTG_MC0CFG4ymApxp1kHjWjXeRvBkNQNBAhUA4HsEBreQFx2zNQ3c0IecvjAFjAwMDBNM0U5QllWTkY4OERUWTAwMDCQUUFl5eJKTpyoZHlcixx7ewAJ6LCi5Lya546JAAAAAAAAAAAAAAAAyDA0NRaUAQAAAAAAAADEYXAtdXVhcy11c2VyAACQwUDxMIuZfEjrB04gdkY2NvcmUwAAAA2B1455DFE9E4AB1A95A6FFAE6842590"
 AUTO_REFRESH_ACCESS_TOKEN = True
 
-# 如果你习惯直接点运行，可以把材料出库单 id 填在这里。
-MATERIALOUT_ID = "2552149668380278793"
+PURINRECORD_ID = "2543852607597707264"
 
 
 def sign(params: dict[str, str], app_secret: str) -> str:
@@ -34,13 +32,15 @@ def sign(params: dict[str, str], app_secret: str) -> str:
 
 
 def read_text(url: str) -> str:
-    with urllib.request.urlopen(url, timeout=30) as response:
+    context = ssl._create_unverified_context() if url.startswith("https://") else None
+    with urllib.request.urlopen(url, timeout=30, context=context) as response:
         body = response.read()
         charset = response.headers.get_content_charset() or "utf-8"
         return body.decode(charset, errors="replace")
 
 
 def get_access_token() -> str:
+    print("正在重新获取 access_token...")
     timestamp = str(int(time.time() * 1000))
     params = {
         "appKey": APP_KEY,
@@ -63,17 +63,18 @@ def get_access_token() -> str:
     if not access_token:
         raise RuntimeError(f"获取 access_token 失败，返回值没有 data.access_token: {response_text}")
 
+    print("access_token 获取成功。")
     return access_token
 
 
-def get_materialout_detail(access_token: str, materialout_id: str) -> str:
+def get_purinrecord_detail(access_token: str, purinrecord_id: str, detail_url: str) -> str:
     query = urllib.parse.urlencode(
         {
             "access_token": access_token,
-            "id": materialout_id,
+            "id": purinrecord_id,
         }
     )
-    request_url = f"{DETAIL_URL}?{query}"
+    request_url = f"{detail_url}?{query}"
     print(f"完整请求地址: {request_url}")
     return read_text(request_url)
 
@@ -89,16 +90,16 @@ def print_json_or_text(text: str) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="请求材料出库单详情并打印返回值。")
-    parser.add_argument("id", nargs="?", help="材料出库单 id")
+    parser = argparse.ArgumentParser(description="请求采购入库单详情并打印返回值。")
+    parser.add_argument("id", nargs="?", help="采购入库单 id")
     parser.add_argument("--access-token", help="已有 access_token；不传则自动获取")
     args = parser.parse_args()
 
-    materialout_id = args.id or MATERIALOUT_ID
-    if not materialout_id:
-        materialout_id = input("请输入 id: ").strip()
+    purinrecord_id = args.id or PURINRECORD_ID
+    if not purinrecord_id:
+        purinrecord_id = input("请输入 id: ").strip()
 
-    if not materialout_id:
+    if not purinrecord_id:
         print("id 不能为空", file=sys.stderr)
         return 1
 
@@ -110,7 +111,7 @@ def main() -> int:
         else:
             access_token = ACCESS_TOKEN or get_access_token()
 
-        print_json_or_text(get_materialout_detail(access_token, materialout_id))
+        print_json_or_text(get_purinrecord_detail(access_token, purinrecord_id, DETAIL_URL))
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
         print(f"HTTP {exc.code}: {body}", file=sys.stderr)
