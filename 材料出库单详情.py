@@ -110,7 +110,8 @@ def main() -> int:
         else:
             access_token = ACCESS_TOKEN or get_access_token()
 
-        print_json_or_text(get_materialout_detail(access_token, materialout_id))
+        response_body = get_materialout_detail(access_token, materialout_id)
+        print(f"responsebody={response_body}")
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
         print(f"HTTP {exc.code}: {body}", file=sys.stderr)

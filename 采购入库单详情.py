@@ -111,7 +111,8 @@ def main() -> int:
         else:
             access_token = ACCESS_TOKEN or get_access_token()
 
-        print_json_or_text(get_purinrecord_detail(access_token, purinrecord_id, DETAIL_URL))
+        response_body = get_purinrecord_detail(access_token, purinrecord_id, DETAIL_URL)
+        print(f"responsebody={response_body}")
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
         print(f"HTTP {exc.code}: {body}", file=sys.stderr)
