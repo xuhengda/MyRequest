@@ -11,5 +11,7 @@ APP_SECRET = "d1a66fae75461d3a1f95884eacc6c1cd26d1fa54"
 API_GATEWAY_BASE_URL = f"{SERVER_BASE_URL}/iuap-api-gateway/yonbip/scm"
 TOKEN_URL = f"{SERVER_BASE_URL}/iuap-api-auth/open-auth/selfAppAuth/getAccessToken"
 
+# 材料出库单详情地址
 MATERIALOUT_DETAIL_URL = f"{API_GATEWAY_BASE_URL}/materialout/detail"
+# 采购入库单详情地址
 PURINRECORD_DETAIL_URL = f"{API_GATEWAY_BASE_URL}/purinrecord/detail"

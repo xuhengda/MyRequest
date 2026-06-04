@@ -10,6 +10,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from datetime import datetime
+
 from 公共配置 import APP_KEY, APP_SECRET, PURINRECORD_DETAIL_URL, TOKEN_URL
 
 
@@ -18,7 +20,7 @@ DETAIL_URL = PURINRECORD_DETAIL_URL
 ACCESS_TOKEN = "YT5_TGdefault-tgTG_MC0CFG4ymApxp1kHjWjXeRvBkNQNBAhUA4HsEBreQFx2zNQ3c0IecvjAFjAwMDBNM0U5QllWTkY4OERUWTAwMDCQUUFl5eJKTpyoZHlcixx7ewAJ6LCi5Lya546JAAAAAAAAAAAAAAAAyDA0NRaUAQAAAAAAAADEYXAtdXVhcy11c2VyAACQwUDxMIuZfEjrB04gdkY2NvcmUwAAAA2B1455DFE9E4AB1A95A6FFAE6842590"
 AUTO_REFRESH_ACCESS_TOKEN = True
 
-PURINRECORD_ID = "2543852607597707264"
+PURINRECORD_ID = "2554110630188548100"
 
 
 def sign(params: dict[str, str], app_secret: str) -> str:
@@ -112,7 +114,7 @@ def main() -> int:
             access_token = ACCESS_TOKEN or get_access_token()
 
         response_body = get_purinrecord_detail(access_token, purinrecord_id, DETAIL_URL)
-        print(f"responsebody={response_body}")
+        print(f"{datetime.now():%H:%M:%S} 采购入库单详情={response_body}")
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
         print(f"HTTP {exc.code}: {body}", file=sys.stderr)

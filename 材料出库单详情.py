@@ -8,6 +8,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime
 
 from 公共配置 import APP_KEY, APP_SECRET, MATERIALOUT_DETAIL_URL, TOKEN_URL
 
@@ -20,7 +21,7 @@ ACCESS_TOKEN = "YT5_TGdefault-tgTG_MC0CFG4ymApxp1kHjWjXeRvBkNQNBAhUA4HsEBreQFx2z
 AUTO_REFRESH_ACCESS_TOKEN = True
 
 # 如果你习惯直接点运行，可以把材料出库单 id 填在这里。
-MATERIALOUT_ID = "2553402424441176066"
+MATERIALOUT_ID = "2553602733125926921"
 
 
 def sign(params: dict[str, str], app_secret: str) -> str:
@@ -111,7 +112,7 @@ def main() -> int:
             access_token = ACCESS_TOKEN or get_access_token()
 
         response_body = get_materialout_detail(access_token, materialout_id)
-        print(f"responsebody={response_body}")
+        print(f"{datetime.now():%H:%M:%S} 材料出库详情{response_body}")
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
         print(f"HTTP {exc.code}: {body}", file=sys.stderr)
