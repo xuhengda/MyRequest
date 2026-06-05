@@ -21,7 +21,7 @@ ACCESS_TOKEN = "YT5_TGdefault-tgTG_MC0CFG4ymApxp1kHjWjXeRvBkNQNBAhUA4HsEBreQFx2z
 AUTO_REFRESH_ACCESS_TOKEN = True
 
 # 如果你习惯直接点运行，可以把材料出库单 id 填在这里。
-MATERIALOUT_ID = "2553602733125926921"
+MATERIALOUT_ID = "2554967338725146633"
 
 
 def sign(params: dict[str, str], app_secret: str) -> str:
